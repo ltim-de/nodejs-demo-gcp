@@ -9,6 +9,9 @@ service:
     www:
       port: 80 # The port that the service will be exposed on
       targetPort: 3000 # The port that the container will be listening on
+    rediscommander:
+      port: 80 # The port that the service will be exposed on
+      targetPort: 8081 # The port that the container will be listening on
 
 # Define the containers that make up this service
 containers:
@@ -21,9 +24,17 @@ containers:
       DB_PASSWORD: ${resources.db.password}
       DB_HOST: ${resources.db.host}
       DB_PORT: ${resources.db.port}
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    variables:
+      REDIS_HOST: ${resources.redis.host}
+      REDIS_PORT: ${resources.redis.port}
+      REDIS_PASSWORD: ${resources.redis.password}
 
 # Define the resources that this service needs
 resources:
+  redis:  # We need a Redis to store data
+    type: redis
   dns: # We need a DNS record to point to the service 
     type: dns
   route:
